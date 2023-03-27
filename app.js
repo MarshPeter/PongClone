@@ -5,8 +5,14 @@ const player2Score = document.querySelector("#score-right");
 const screenHeight = 500;
 const screenWidth = 1400;
 
+const ballDiameter = 20;
+
 const player1Position = [30, 225];
 const player2Position = [screenWidth - 30 - 20, 225];
+const ballPosition = [
+  (screenWidth - ballDiameter) / 2,
+  (screenHeight - ballDiameter) / 2,
+];
 
 const player1 = document.createElement("div");
 player1.classList.add("pong");
@@ -18,13 +24,22 @@ player2.classList.add("pong");
 gameScreen.appendChild(player2);
 let player2Speed = 0;
 
+const ball = document.createElement("div");
+ball.classList.add("ball");
+gameScreen.appendChild(ball);
+let ballSpeed = [
+  Math.floor(Math.random() * 10) + 1,
+  Math.floor(Math.random() * 10) + 1,
+];
+
 drawPlayer1();
 drawPlayer2();
+drawBall();
 
 document.addEventListener("keydown", changeMovement);
 document.addEventListener("keyup", stopMovement);
 
-let movement = setInterval(movePlayers, 10);
+let movement = setInterval(moveEntities, 10);
 
 function changeMovement(e) {
   console.log(e.key);
@@ -53,7 +68,7 @@ function stopMovement(e) {
   }
 }
 
-function movePlayers() {
+function moveEntities() {
   if (player1Position[1] >= 0 && player1Position[1] <= screenHeight - 50) {
     player1Position[1] += player1Speed;
   } else if (player1Position[1] < 0) {
@@ -70,8 +85,30 @@ function movePlayers() {
     player2Position[1] = screenHeight - 50;
   }
 
+  // ball vertical movement
+  if (ballPosition[1] >= 0 && ballPosition[1] <= screenHeight - ballDiameter) {
+    ballPosition[1] += ballSpeed[1];
+  } else if (ballPosition[1] < 0) {
+    ballPosition[1] = 0;
+    ballSpeed[1] *= -1;
+  } else if (ballPosition[1] + 50 > screenHeight) {
+    ballPosition[1] = screenHeight - ballDiameter;
+    ballSpeed[1] *= -1;
+  }
+
+  // ball horizontal movement
+  if (ballPosition[0] >= 0 && ballPosition[0] <= screenWidth - ballDiameter) {
+    ballPosition[0] += ballSpeed[0];
+  } else if (ballPosition[0] < 0) {
+    ballPosition[0] = 0;
+    ballSpeed[0] *= -1;
+  } else if (ballPosition[0] + 50 > screenWidth) {
+    ballPosition[0] = screenWidth - ballDiameter;
+    ballSpeed[0] *= -1;
+  }
   drawPlayer1();
   drawPlayer2();
+  drawBall();
 }
 
 function drawPlayer2() {
@@ -82,4 +119,9 @@ function drawPlayer2() {
 function drawPlayer1() {
   player1.style.left = player1Position[0] + "px";
   player1.style.top = player1Position[1] + "px";
+}
+
+function drawBall() {
+  ball.style.left = ballPosition[0] + "px";
+  ball.style.top = ballPosition[1] + "px";
 }
