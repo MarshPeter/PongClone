@@ -11,47 +11,67 @@ const player2Position = [screenWidth - 30 - 20, 225];
 const player1 = document.createElement("div");
 player1.classList.add("pong");
 gameScreen.appendChild(player1);
-let player1Moving;
+let player1Speed = 0;
 
 const player2 = document.createElement("div");
 player2.classList.add("pong");
 gameScreen.appendChild(player2);
-let player2Moving;
+let player2Speed = 0;
 
 drawPlayer1();
 drawPlayer2();
 
-document.addEventListener("keypress", player1Movement);
-document.addEventListener("keyup", player1MovementStop);
+document.addEventListener("keydown", changeMovement);
+document.addEventListener("keyup", stopMovement);
 
-function player1Movement(e) {
+let movement = setInterval(movePlayers, 10);
+
+function changeMovement(e) {
+  console.log(e.key);
   switch (e.key) {
     case "w":
-      player1Moving = setInterval(moveUpPlayer1, 10);
+      player1Speed = -5;
       break;
     case "s":
-      player1Moving = setInterval(moveDownPlayer1, 10);
+      player1Speed = 5;
+      break;
+    case "ArrowUp":
+      player2Speed = -5;
+      break;
+    case "ArrowDown":
+      player2Speed = 5;
       break;
   }
 }
 
-function moveUpPlayer1() {
-  if (player1Position[1] > 0) {
-    console.log("test");
-    player1Position[1] -= 2;
-    drawPlayer1();
+function stopMovement(e) {
+  if (e.key === "w" || e.key === "s") {
+    player1Speed = 0;
+  }
+  if (e.key === "ArrowUp" || e.key === "ArrowDown") {
+    player2Speed = 0;
   }
 }
 
-function moveDownPlayer1() {
-  if (player1Position[1] < screenHeight - 50) {
-    player1Position[1] += 2;
-    drawPlayer1();
+function movePlayers() {
+  if (player1Position[1] >= 0 && player1Position[1] <= screenHeight - 50) {
+    player1Position[1] += player1Speed;
+  } else if (player1Position[1] < 0) {
+    player1Position[1] = 0;
+  } else if (player1Position[1] + 50 > screenHeight) {
+    player1Position[1] = screenHeight - 50;
   }
-}
 
-function player1MovementStop() {
-  clearInterval(player1Moving);
+  if (player2Position[1] >= 0 && player2Position[1] <= screenHeight - 50) {
+    player2Position[1] += player2Speed;
+  } else if (player2Position[1] < 0) {
+    player2Position[1] = 0;
+  } else if (player2Position[1] + 50 > screenHeight) {
+    player2Position[1] = screenHeight - 50;
+  }
+
+  drawPlayer1();
+  drawPlayer2();
 }
 
 function drawPlayer2() {
