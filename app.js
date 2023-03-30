@@ -9,6 +9,8 @@ const ballDiameter = 20;
 
 const player1Position = [30, 225];
 const player2Position = [screenWidth - 30 - 20, 225];
+const playerWidth = 20;
+const playerHeight = 50;
 const ballPosition = [
   (screenWidth - ballDiameter) / 2,
   (screenHeight - ballDiameter) / 2,
@@ -27,10 +29,12 @@ let player2Speed = 0;
 const ball = document.createElement("div");
 ball.classList.add("ball");
 gameScreen.appendChild(ball);
-let ballSpeed = [
-  Math.floor(Math.random() * 10) + 1,
-  Math.floor(Math.random() * 10) + 1,
-];
+// let ballSpeed = [
+//   Math.floor(Math.random() * 10) + 1,
+//   Math.floor(Math.random() * 10) + 1,
+// ];
+
+let ballSpeed = [2, 3];
 
 drawPlayer1();
 drawPlayer2();
@@ -69,6 +73,40 @@ function stopMovement(e) {
 }
 
 function moveEntities() {
+  checkPlayerCollisions();
+  checkBallCollisions();
+  checkBallPlayerCollisions();
+  drawPlayer1();
+  drawPlayer2();
+  drawBall();
+}
+
+function checkBallPlayerCollisions() {
+  // player1 side
+  if (
+    ballPosition[0] < player1Position[0] + playerWidth &&
+    ballPosition[0] > player1Position[0] &&
+    ballPosition[1] > player1Position[1] &&
+    ballPosition[1] + ballDiameter < player1Position[1] + playerHeight
+  ) {
+    ballPosition[0] += 3;
+    ballSpeed[0] = ballSpeed[0] * -1;
+  }
+
+  // player2 side
+  if (
+    ballPosition[0] < player2Position[0] + playerWidth &&
+    ballPosition[0] > player2Position[0] &&
+    ballPosition[1] > player2Position[1] &&
+    ballPosition[1] + ballDiameter < player2Position[1] + playerHeight
+  ) {
+    ballPosition[0] -= 20;
+    ballSpeed[0] = ballSpeed[0] * -1;
+  }
+}
+
+function checkPlayerCollisions() {
+  // check player 1 collisions
   if (player1Position[1] >= 0 && player1Position[1] <= screenHeight - 50) {
     player1Position[1] += player1Speed;
   } else if (player1Position[1] < 0) {
@@ -77,6 +115,7 @@ function moveEntities() {
     player1Position[1] = screenHeight - 50;
   }
 
+  // check player 2 collisions
   if (player2Position[1] >= 0 && player2Position[1] <= screenHeight - 50) {
     player2Position[1] += player2Speed;
   } else if (player2Position[1] < 0) {
@@ -84,7 +123,9 @@ function moveEntities() {
   } else if (player2Position[1] + 50 > screenHeight) {
     player2Position[1] = screenHeight - 50;
   }
+}
 
+function checkBallCollisions() {
   // ball vertical movement
   if (ballPosition[1] >= 0 && ballPosition[1] <= screenHeight - ballDiameter) {
     ballPosition[1] += ballSpeed[1];
@@ -106,9 +147,6 @@ function moveEntities() {
     ballPosition[0] = screenWidth - ballDiameter;
     ballSpeed[0] *= -1;
   }
-  drawPlayer1();
-  drawPlayer2();
-  drawBall();
 }
 
 function drawPlayer2() {
